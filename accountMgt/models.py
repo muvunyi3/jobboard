@@ -12,3 +12,26 @@ class Employer(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Recruiter(models.Model):
+    #code, name, description, sector, url, location ...
+    name = models.CharField(max_length=255,default="")
+    title = models.CharField(max_length=25)
+    email = models.EmailField
+    phone = models.CharField(max_length=30)
+    employerId = models.ForeignKey("Employer", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+class Jobseeker(models.Model):
+    #code, name, description, sector, url, location ...
+    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=25)
+    email = models.EmailField
+    phone = models.CharField(max_length=30)
+    profile = models.CharField(max_length=50)
+    resume = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name    
