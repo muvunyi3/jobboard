@@ -1,0 +1,163 @@
+{% extends "base_site.html" %}
+
+{% block title %} Fixed Footer {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <!-- jQuery custom content scroller 
+  <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>-->
+{% endblock stylesheets %}
+
+{% block body_class %}nav-md footer_fixed{% endblock body_class %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Job Dashboard<small></small></h3>
+          
+        </div>
+      </div>
+      
+      <div class="clearfix"></div>
+        <div class="row">
+            <div class="row">
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="x_panel">
+                      <div class="x_title">
+                        <h2>Donut Graph <small>Sessions</small></h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                          </li>
+                          <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                            <ul class="dropdown-menu" role="menu">
+                              <li><a href="#">Settings 1</a>
+                              </li>
+                              <li><a href="#">Settings 2</a>
+                              </li>
+                            </ul>
+                          </li>
+                          <li><a class="close-link"><i class="fa fa-close"></i></a>
+                          </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                      </div>
+                      <div class="x_content">
+                        <canvas id="canvasDoughnut"></canvas>
+                      </div>
+                    </div>
+                  </div>
+        
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2>Bar graph <small>Sessions</small></h2>
+                      <ul class="nav navbar-right panel_toolbox">
+                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                          <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Settings 1</a>
+                            </li>
+                            <li><a href="#">Settings 2</a>
+                            </li>
+                          </ul>
+                        </li>
+                        <li><a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                      </ul>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                      <canvas id="barChartNoJobsPerEmp"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+              <div class="row">
+                
+        
+                
+              </div>
+        </div>    
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- Chart.js -->
+  <script src="/static/vendors/Chart.js/dist/Chart.min.js"></script>
+  <script type="text/javascript" >
+    ctx1 = document.getElementById("barChartNoJobsPerEmp");
+    new Chart(ctx1, {
+            type: 'bar',
+            data: {
+            labels: [{% for emp in empCountsDict %} '{{ emp.name }}',{%endfor%}],
+            datasets: [{
+                label: 'Number of job openings',
+                data: [{%for emp in empCountsDict%} '{{ emp.count }}',{%endfor%}],
+                borderWidth: 1
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+
+
+    //ctx = document.getElementById("chartNoJobsPerEmp");
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+            title: {
+                display: true,
+                text: (ctx) => 'Point Style: ' + ctx.chart.data.datasets[0].pointStyle,
+            }
+            }
+        }
+        };
+  </script>
+  <!--<script src="/static/vendors/jquery/dist/jquery.min.js"></script>-->
+  <script type="text/javascript" language="javascript">
+    
+    $(document).ready(function () {
+        $('#newJobForm').submit(function (e) {
+            console.log("Loading...");
+            e.preventDefault();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/advert/v1/job/posting",
+                    data: $('#newJobForm').serialize(),
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response),
+                        $('#resultsBlock').html(response.status);
+                        //$('#newJobForm').append("<div class=\"\">"+response+"</div>")                                        
+                        $('#newJobForm')[0].reset();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(data),
+                        console.log(response),
+                        console.log(error);
+                    },
+            }); 
+        } );     
+    });
+
+    </script>
+
+{% endblock javascripts %}

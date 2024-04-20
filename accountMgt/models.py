@@ -17,7 +17,7 @@ class Recruiter(models.Model):
     #code, name, description, sector, url, location ...
     name = models.CharField(max_length=255,default="")
     title = models.CharField(max_length=25)
-    email = models.EmailField
+    email = models.CharField(max_length=25,default="")
     phone = models.CharField(max_length=30)
     employerId = models.ForeignKey("Employer", on_delete=models.CASCADE)
 
@@ -28,8 +28,9 @@ class Jobseeker(models.Model):
     #code, name, description, sector, url, location ...
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=25)
-    email = models.EmailField
+    email = models.CharField(max_length=25,default="")
     phone = models.CharField(max_length=30)
+    gender = models.CharField(max_length=50, default='')
     profile = models.CharField(max_length=50)
     resume = models.CharField(max_length=50)
 

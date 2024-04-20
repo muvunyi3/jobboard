@@ -1,0 +1,151 @@
+{% extends "base_site.html" %}
+
+{% block title %} Fixed Footer {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+  <!-- jQuery custom content scroller 
+  <link href="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>-->
+{% endblock stylesheets %}
+
+{% block body_class %}nav-md footer_fixed{% endblock body_class %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>Job Posting <small><strong></strong></small></h3>
+        </div>
+        <div class="x_content">
+            <form id="newJobForm" class="form-horizontal form-label-left" method="POST" enctype="multipart/form-data" data-parsley-validate><!-- novalidate> --> 
+                  {% csrf_token %}
+                  <!--{{ form.as_p }}-->
+                  <span class="section">Job Details</span>
+
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="title">Job Title <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input id="title" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" name="title" placeholder="enter position" required="required" type="text">
+                    </div>
+                  </div>
+
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="employerId">Employers <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select id="employerId" name="employerId" class="form-control" required>
+                        <option value="">Choose..</option>
+                        {%for emp in employers%}                          
+                          <option value="{{emp.id}}">{{emp.name}}</option>
+                        {% endfor%}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="jobType">Job Type <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select id="jobType" name="jobType" class="form-control" required>
+                        <option value="">Choose..</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Internship">Internship</option>
+                        <option value="Remote">Remote</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="category">Job Category <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input id="category" class="form-control col-md-7 col-xs-12" data-validate-length-range="6" name="category" placeholder="Enter Category. ex. Finance, IT, Construction..." required="required" type="text">
+                    </div>
+                  </div>                  
+
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="advertDate">Job Advertising Date <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input id="advertDate" name="advertDate" class="date-picker form-control col-md-7 col-xs-12" required="required" type="date" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}">                 
+                    </div>
+                  </div>
+                  
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="closingDate">Job Advert Closing Date <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <input id="closingDate" name="closingDate" class="date-picker form-control col-md-7 col-xs-12" required="required" type="date" pattern="\d{4}-\d{2}-\d{2}">                 
+                    </div>
+                  </div>
+                  
+
+                  <div class="item form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="summary">Job Summary <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <textarea id="summary" required="required" class="form-control" name="summary" data-parsley-trigger="keyup" ></textarea>
+                    </div>
+                  </div>
+
+                  
+                
+                
+                
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                  <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+  		            <button class="btn btn-primary" type="reset">Reset</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                  </div>
+                </div>  
+                <div class="form-group">
+                    <p id="resultsBlock"></p>
+                </div>
+
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ block.super }}
+  <!-- jQuery custom content scroller -->
+  <script src="/static/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+  
+  <!--<script src="/static/vendors/jquery/dist/jquery.min.js"></script>-->
+  <script type="text/javascript" language="javascript">
+    
+    $(document).ready(function () {
+        $('#newJobForm').submit(function (e) {
+            console.log("Loading...");
+            e.preventDefault();
+            $.ajax(
+                {
+                    type: "POST",
+                    url: "/advert/v1/job/posting",
+                    data: $('#newJobForm').serialize(),
+                    dataType: "json",
+                    success: function (response) {
+                        console.log(response),
+                        $('#resultsBlock').html(response.status);
+                        //$('#newJobForm').append("<div class=\"\">"+response+"</div>")                                        
+                        $('#newJobForm')[0].reset();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(data),
+                        console.log(response),
+                        console.log(error);
+                    },
+            }); 
+        } );     
+    });
+
+    </script>
+
+{% endblock javascripts %}
