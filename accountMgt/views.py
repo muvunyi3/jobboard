@@ -9,11 +9,13 @@ from .serialize import EmployerSerializer, RecruiterSerializer, JobseekerSeriali
 class EmployerCreate(CreateView):  
     model = Employer  
     fields = '__all__' 
+    def get_success_url(self):
+        return JsonResponse({'status': 'Record successful!'})
 
 class RecruiterCreate(CreateView):  
     model = Recruiter  
     fields = '__all__' 
-
+    
 class JobseekersCreate(CreateView):  
     model = Jobseeker 
     fields = '__all__'  
@@ -24,16 +26,17 @@ def get_jobseeker_form(request):
 
 def submit_jobseeker_data(request):   
     if request.method == 'POST':
-        
+      
         #jobseeker = Jobseeker.objects.create(name=data.get('name'), title=data.get('title'), email=data.get('email'), phone=data.get('phone'))
         print("I am called ...")
         print("name: " + request.POST.get('name'))
         name = request.POST.get('name'),
         title = request.POST.get('title'),
-        #email = request.POST.get('email'),
+        email = request.POST.get('email1'),
         phone = request.POST.get('phone'),
+        gender = request.POST.get('gender'),
         
-        jobseeker = Jobseeker.objects.create(name=name, title=title,  phone=phone)
+        jobseeker = Jobseeker.objects.create(name=name[0], title=title[0],  phone=phone[0], email=email[0], gender=gender[0])
         return JsonResponse({'status': 'Record successful!'})
         
     else:

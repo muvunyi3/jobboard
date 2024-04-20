@@ -4,7 +4,7 @@ from .models import Employer, Recruiter, Jobseeker
 class EmployerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employer
-        fields = '__all__'
+        fields = ['name', 'code', 'sector']
 
 class JobseekerSerializer(serializers.ModelSerializer):
     class Meta:
